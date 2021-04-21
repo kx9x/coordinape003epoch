@@ -17,7 +17,7 @@ def main(depositYfi = True):
     max_votes = sent_max * num_contributors
 
     # the 0.03% group has 24.44 YFI allocated for this epoch
-    yfi_allocated = Wei(24.44 * 10 ** 18)
+    yfi_allocated = Wei('24.44 ether')
 
     # Convert received votes to Fraction so we can cleanly avoid floating point
     # error when we adjust the unsent votes
@@ -48,7 +48,7 @@ def main(depositYfi = True):
     safe = ApeSafe('ychad.eth')
     yfi = safe.contract('0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e')
     yvyfi = safe.contract('0xE14d13d8B3b85aF791b2AADD661cDBd5E6097Db1')
-    disperse = safe.contract("0xD152f549545093347A162Dce210e7293f1452150")
+    disperse = safe.contract('0xD152f549545093347A162Dce210e7293f1452150')
 
     if depositYfi:
         assert(yfi.balanceOf(safe.account) >= yfi_allocated)
@@ -85,5 +85,5 @@ def main(depositYfi = True):
     safe.preview(safe_tx)
     safe.post_transaction(safe_tx)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
