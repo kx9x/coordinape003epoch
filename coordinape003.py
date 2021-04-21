@@ -50,9 +50,10 @@ def main(depositYfi = True):
     yvyfi = safe.contract('0xE14d13d8B3b85aF791b2AADD661cDBd5E6097Db1')
     disperse = safe.contract('0xD152f549545093347A162Dce210e7293f1452150')
 
+    yvyfi_before = yvyfi.balanceOf(safe.account)
+    yfi_before = yfi.balanceOf(safe.account)
     if depositYfi:
         assert(yfi.balanceOf(safe.account) >= yfi_allocated)
-        yvyfi_before = yvyfi.balanceOf(safe.account)
         yfi.approve(yvyfi, yfi_allocated)
         yvyfi.deposit(yfi_allocated)
         yvyfi_to_disperse = Wei(yvyfi.balanceOf(safe.account) - yvyfi_before)
@@ -76,10 +77,24 @@ def main(depositYfi = True):
     assert yfi_allocated == (yvyfi_to_disperse * yvyfi.pricePerShare()) / 10 ** 18
 
     yvyfi.approve(disperse, sum(amounts))
-
     recipients = [contributor['address'] for contributor in contributors]
+    recipients_yvfi_before = [yvyfi.balanceOf(recipient) for recipient in recipients]
+
     disperse.disperseToken(yvyfi, recipients, amounts)
     history[-1].info()
+
+    if depositYfi:
+        # Make sure we sent all the new yvYFI and only used as much YFI as expected
+        assert(yvyfi_before == yvyfi.balanceOf(safe.account))
+        assert(yfi_before - yfi_allocated == yfi.balanceOf(safe.account))
+    else:
+        # Make sure we didn't use YFI for some reason and only used as much yvYFI as expected
+        assert(yfi_before == yfi.balanceOf(safe.account))
+        assert(yvyfi_before - yvyfi_to_disperse == yvyfi.balanceOf(safe.account))
+    
+    # For each recipient, make sure their yvYFI amount increased by the expected amount
+    for recipient, yvyfi_before, amount in zip(recipients, recipients_yvfi_before, amounts):
+        assert(yvyfi.balanceOf(recipient) == yvyfi_before + amount)
 
     safe_tx = safe.multisend_from_receipts()
     safe.preview(safe_tx)
