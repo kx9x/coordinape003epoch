@@ -1,6 +1,6 @@
 # coordinape003epoch
 
-This repo contains ApeSafe script to do the dispersement for Yearn's special 0.03% coordinape epoch. Yearn allocated 24.44 YFI to be distributed across 25 folks who contributed to Yearn in the early days.
+This repo contains ApeSafe script to do the disbursement for Yearn's special 0.03% coordinape epoch. Yearn allocated 24.44 YFI to be distributed across 25 folks who contributed to Yearn in the early days.
 
 The folks in this special coordinape group held a normal vote, however, since some people didn't fully vote, we decided as a group to split the unsent votes equally so the people who didn't vote don't benefit massively from a lack of participation.
 
