@@ -55,24 +55,24 @@ def main(depositYfi = True):
         yvyfi_before = yvyfi.balanceOf(safe.account)
         yfi.approve(yvyfi, yfi_allocated)
         yvyfi.deposit(yfi_allocated)
-        yvyfi_to_disperse = yvyfi.balanceOf(safe.account) - yvyfi_before
+        yvyfi_to_disperse = Wei(yvyfi.balanceOf(safe.account) - yvyfi_before)
     else:
         # I don't think this is exactly how deposit calculates the yvYFI out, but it should be close enough
-        yvyfi_to_disperse = Wei(yfi_allocated / yvyfi.pricePerShare() * 10 ** 18)
+        yvyfi_to_disperse = Wei((yfi_allocated / yvyfi.pricePerShare()) * 10 ** 18)
         assert(yvyfi.balanceOf(safe.account) >= yvyfi_to_disperse)
 
     # Converting here will leave some dust
     amounts = [Wei(yvyfi_to_disperse * (contributor['received'] / Fraction(max_votes))) for contributor in contributors]
 
     # Dust should be less than or equal to 1 Wei per contributor due to the previous floor
-    dust = yvyfi_to_disperse - Wei(sum(amounts))
+    dust = yvyfi_to_disperse - sum(amounts)
     assert dust <= num_contributors
 
     # Some lucky folks can get some dust, woot
     for i in range(math.floor(dust)):
-        amounts[i] += Wei(1)
+        amounts[i] += 1
 
-    assert Wei(sum(amounts)) == yvyfi_to_disperse
+    assert sum(amounts) == yvyfi_to_disperse
     assert yfi_allocated == (yvyfi_to_disperse * yvyfi.pricePerShare()) / 10 ** 18
 
     yvyfi.approve(disperse, sum(amounts))
