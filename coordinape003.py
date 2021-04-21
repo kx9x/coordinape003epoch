@@ -32,7 +32,7 @@ def main(depositYfi = True):
 
         # If a contributor didn't send all of their votes, spread those evenly
         if leftover_to_send > 0:
-            # Only spread out evenly to others, not oneself
+            # Only spread out evenly to others, not to oneself (i.e. self-voting)
             for contributor_to_receive_more in contributors:
                 if contributor_to_receive_more['No.'] != contributor['No.']:
                     contributor_to_receive_more['received'] += Fraction(leftover_to_send) / Fraction(num_contributors - 1)
@@ -58,8 +58,7 @@ def main(depositYfi = True):
         yvyfi.deposit(yfi_allocated)
         yvyfi_to_disperse = Wei(yvyfi.balanceOf(safe.account) - yvyfi_before)
     else:
-        # I don't think this is exactly how deposit calculates the yvYFI out, but it should be close enough
-        yvyfi_to_disperse = Wei((yfi_allocated / yvyfi.pricePerShare()) * 10 ** 18)
+        yvyfi_to_disperse = Wei((yfi_allocated * yvyfi.totalSupply()) / yvyfi.totalAssets())
         assert(yvyfi.balanceOf(safe.account) >= yvyfi_to_disperse)
 
     # Converting here will leave some dust
