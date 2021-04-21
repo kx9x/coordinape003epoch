@@ -11,6 +11,7 @@ def main(depositYfi = True):
     buff = io.StringIO(r.text)
     contributors = list(csv.DictReader(buff))
 
+    # Each person can send at most 100 votes
     sent_max = 100
     num_contributors = len(contributors)
     max_votes = sent_max * num_contributors
@@ -27,12 +28,10 @@ def main(depositYfi = True):
     # As a group, we voted on spreading the votes as if they voted for all
     # the others equally with their leftover votes.
     for contributor in contributors:
-        sent = int(contributor['sent'])
+        leftover_to_send = sent_max - int(contributor['sent'])
 
         # If a contributor didn't send all of their votes, spread those evenly
-        if sent != sent_max:
-            leftover_to_send = sent_max - sent
-
+        if leftover_to_send > 0:
             # Only spread out evenly to others, not oneself
             for contributor_to_receive_more in contributors:
                 if contributor_to_receive_more['No.'] != contributor['No.']:
@@ -60,12 +59,13 @@ def main(depositYfi = True):
     else:
         # I don't think this is exactly how deposit calculates the yvYFI out, but it should be close enough
         yvyfi_to_disperse = Wei(yfi_allocated / yvyfi.pricePerShare() * 10 ** 18)
+        assert(yvyfi.balanceOf(safe.account) >= yvyfi_to_disperse)
 
     # Converting here will leave some dust
     amounts = [Wei(yvyfi_to_disperse * (contributor['received'] / Fraction(max_votes))) for contributor in contributors]
 
     # Dust should be less than or equal to 1 Wei per contributor due to the previous floor
-    dust = abs(Wei(sum(amounts)) - yvyfi_to_disperse)
+    dust = yvyfi_to_disperse - Wei(sum(amounts))
     assert dust <= num_contributors
 
     # Some lucky folks can get some dust, woot
