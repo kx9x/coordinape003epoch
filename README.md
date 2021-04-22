@@ -4,4 +4,4 @@ Yearn allocated 24.44 YFI to be distributed across 25 folks who contributed to Y
 
 The folks in this special coordinape group held a normal vote, however, since some people didn't fully vote, we decided as a group to split the unsent votes equally. This way the people who didn't vote don't benefit massively from a lack of participation.
 
-This script handles the redistribution of the remaining votes and the conversion of the 24.44 YFI into yvYFI for dispersement. Either equivalent yvYFI can directly be sent from ychad.eth or 24.44 YFI can be deposited into the vault and the resulting yvYFI shares will be sent instead. Both should be equivalent and the multi-sig can choose whichever is best. 
+This script handles the redistribution of the remaining votes and the conversion of the 24.44 YFI into yvYFI for disbursement. Either equivalent yvYFI can directly be sent from ychad.eth or 24.44 YFI can be deposited into the vault and the resulting yvYFI shares will be sent instead. Both should be equivalent and the multi-sig can choose whichever is best. 
