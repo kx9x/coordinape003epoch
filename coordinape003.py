@@ -7,7 +7,7 @@ from brownie import *
 import math
 
 def main(depositYfi = True):
-    r = requests.get('https://003.coordinape.me/api/csv?epoch=1')
+    r = requests.get('https://coordinape.me/api/3/csv?epoch=1')
     buff = io.StringIO(r.text)
     contributors = list(csv.DictReader(buff))
 
